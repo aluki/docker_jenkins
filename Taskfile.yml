@@ -39,8 +39,8 @@ tasks:
     cmds:
       - img build -t {{.IMAGE}}:{{.TAG}} --build-arg "FROM_IMAGE={{.FROM_IMAGE}}" --build-arg "FROM_TAG={{.FROM_TAG}}" --build-arg "PROGRAM={{.PROGRAM}}" --build-arg "VERSION={{.VERSION}}" .
 
-  run:
-    desc: Runs the image
+  install:
+    desc: Installs the image
     deps:
       - build
     requires:
@@ -51,6 +51,18 @@ tasks:
       - Dockerfile
     cmds:
       - img save {{.IMAGE}}:{{.TAG}} | docker load
+
+  run:
+    desc: Runs the image
+    deps:
+      - install
+    requires:
+      vars:
+        - IMAGE
+        - TAG
+    sources:
+      - Dockerfile
+    cmds:
       - docker run --rm -it {{.IMAGE}}:{{.TAG}}
 
   test:
