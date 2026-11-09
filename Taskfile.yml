@@ -1,0 +1,58 @@
+# https://taskfile.dev
+
+version: '3'
+
+dotenv:
+  - .env
+  - .env.dist
+
+tasks:
+
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  init:
+    desc: Initialises the project
+    sources:
+      - mise.toml
+    generates:
+      - mise.lock
+    cmds:
+      - mise install
+
+  build:
+    desc: Builds the image
+    deps:
+      - init
+    requires:
+      vars:
+        - IMAGE
+        - TAG
+    sources:
+      - Dockerfile
+    cmds:
+      - img build -t {{.IMAGE}}:{{.TAG}} .
+
+  run:
+    desc: Runs the image
+    deps:
+      - build
+    requires:
+      vars:
+        - IMAGE
+        - TAG
+    sources:
+      - Dockerfile
+    cmds:
+      - img save {{.IMAGE}}:{{.TAG}} | docker load
+      - docker run --rm -it {{.IMAGE}}:{{.TAG}}
+
+  test:
+    desc: Test the project
+    deps:
+      - build
+    cmds:
+      - echo "Implement me"
+      - false

@@ -1,0 +1,6 @@
+[settings]
+lockfile = true
+
+[tools]
+"github:genuinetools/img" = "0"
+task = "3"
